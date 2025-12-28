@@ -1,3 +1,4 @@
+import copy
 from piece import Piece
 
 class CheckersEngine:
@@ -127,3 +128,46 @@ class CheckersEngine:
         self.must_jump_piece = None
         self.turn = 'B' if self.turn == 'W' else 'W'
         return True
+    
+
+    def is_game_over(self):
+       return len(self.get_all_valid_moves('W')) == 0 or len(self.get_all_valid_moves('B')) == 0
+    
+
+    def check_winner(self):
+        white_moves = self.get_all_valid_moves('W')
+        black_moves = self.get_all_valid_moves('B')
+
+        if not white_moves:
+            return 'B'
+        if not black_moves:
+            return 'W'
+            
+        return None
+    
+
+    #pentru AI
+    def evaluate(self):
+        score = 0
+        for r in range(8):
+            for c in range(8):
+                piece = self.board[r][c]
+                if piece:
+                    value = 10 + (2 if piece.king else 0) # King valorează mai mult
+                    if piece.color == 'W':
+                        score += value
+                    else:
+                        score -= value
+        return score
+
+    def get_all_valid_moves(self, color): #toate posibilitatile pentru o culoare
+        temp_turn = self.turn
+        self.turn = color
+        moves = self.get_legal_moves()
+        self.turn = temp_turn
+        return moves
+
+    def simulate_move(self, start, end): #face miscare intr-o simulare (copie)
+        clone = copy.deepcopy(self)
+        clone.make_move(start, end)
+        return clone
