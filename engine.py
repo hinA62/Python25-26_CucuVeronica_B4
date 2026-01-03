@@ -1,4 +1,5 @@
 import copy
+import pickle
 from piece import Piece
 
 class CheckersEngine:
@@ -171,3 +172,22 @@ class CheckersEngine:
         clone = copy.deepcopy(self)
         clone.make_move(start, end)
         return clone
+    
+
+    #pentru save/load
+    def save_game(self, filename="savegame.dat"):
+        try:
+            with open(filename, "wb") as f:
+                pickle.dump(self, f)
+            print("Joc salvat cu succes!")
+        except Exception as e:
+            print(f"Eroare la salvare: {e}")
+
+    @staticmethod
+    def load_game(filename="savegame.dat"):
+        try:
+            with open(filename, "rb") as f:
+                return pickle.load(f)
+        except FileNotFoundError:
+            print("Nu s-a găsit nicio salvare.")
+            return None

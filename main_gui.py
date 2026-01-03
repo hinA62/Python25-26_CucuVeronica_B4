@@ -1,4 +1,5 @@
 import pygame
+import copy
 from engine import CheckersEngine
 from constants import *
 from ai import minimax
@@ -10,6 +11,7 @@ class CheckersGUI:
         self.selected_pos = None
         self.valid_moves = []
         self.game_mode = None
+        self.history = []
 
 
     def draw_menu(self):
@@ -26,7 +28,7 @@ class CheckersGUI:
 
     def update(self):
         if self.game_mode == 'AI' and self.game.turn == 'B':
-            pygame.time.delay(500) # Să nu mute instantaneu
+            pygame.time.delay(500) 
             _, move = minimax(self.game, 3, -float('inf'), float('inf'), False)
             if move:
                 self.game.make_move(move[0], move[1])
@@ -72,6 +74,7 @@ class CheckersGUI:
         move = next((m for m in self.valid_moves if m[1] == (row, col)), None)
         
         if move:
+            self.save_state_to_history()
             self.game.make_move(self.selected_pos, (row, col))
             self.selected_pos = None
             self.valid_moves = []
@@ -99,6 +102,18 @@ class CheckersGUI:
         restart_text = small_font.render("Apasă R pentru a juca din nou", True, WHITE)
         restart_rect = restart_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 60))
         self.win.blit(restart_text, restart_rect)
+
+    def save_state_to_history(self):
+        self.history.append(copy.deepcopy(self.game))
+        if len(self.history) > 7:
+            self.history.pop(0)
+
+    def undo_move(self):
+        if self.history:
+            self.game = self.history.pop()
+            self.selected_pos = None
+            self.valid_moves = []
+            print("Undo realizat.")
 
 
 
@@ -138,11 +153,27 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN and not winner:
                 gui.handle_click(pygame.mouse.get_pos())
             
-            # Opțiune de restart
             if event.type == pygame.KEYDOWN:
+                # R - Restart
                 if event.key == pygame.K_r:
-                    main() # Repornește jocul (metoda simplă)
+                    main()
                     return
+                
+                # U - Undo
+                if event.key == pygame.K_u and not winner:
+                    gui.undo_move()
+
+                # S - Save
+                if event.key == pygame.K_s:
+                    gui.game.save_game()
+
+                # L - Load
+                if event.key == pygame.K_l:
+                    loaded_game = CheckersEngine.load_game()
+                    if loaded_game:
+                        gui.game = loaded_game
+                        gui.history = []
+                        winner = None
         
         gui.update()
         if winner:
