@@ -1,13 +1,3 @@
-# Status actual:
-- Am implementat logica jocului de Dame;
-- Am adaugat interfata grafica, folosind biblioteca Pygame;
-- Am implementat AI-ului (minmax);
-- Am adaugat meniu si posibilitatea de a alege modul de joc (2 jucatori sau jucator vs ai);
-- Am adaugat mesaj pentru castigator.
-  
-Mentiune:
-- Momentan exista 2 fisiere main: unul reprezinta jocul in consola (main.py), iar celalalt este jocul propriu-zis, cu interfata grafica (main_gui.py). Jocul din consola este o solutie temporara, pe care o voi sterge la final.
-
-
-## Pasii urmatori:
-- Implementarea istoricului jocurilor si posibilitatii de a relua dintr-o stare salvata.
+# Joc de Dame
+Funcționează în conformitate cu regulile americane ale jocului de dame: mers și atac pe diagonală înainte un rând pentru piesă simplă, mers și atac pe diagonaală în toate direcțiile un rând pentru damă.
+Din meiu, se poate selecta modul de joc: jucător uman vs jucător uman (apăsare tasta 1) sau jucător uman vs AI (apăsare tasta 2). Jocul permite salvarea unei stări (tasta S) și reluarea lui din acea staare (tasta L), precum și renunțarea la un număr de maxim 7 mișcări prin apăsarea tastei U.
